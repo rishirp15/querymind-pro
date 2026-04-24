@@ -6,8 +6,9 @@ const cors = require('cors');
 require('dotenv').config(); // Loads variables from .env file
  
 // Import our route files (we will create these next)
-const dbRoutes = require('./routes/database');
-const aiRoutes  = require('./routes/ai');
+const dbRoutes        = require('./routes/database');
+const aiRoutes        = require('./routes/ai');
+const simulatorRoutes = require('./routes/simulator');
  
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -26,6 +27,8 @@ app.use(express.json());
 app.use('/api/db', dbRoutes);
 // All AI routes start with /api/ai
 app.use('/api/ai', aiRoutes);
+// Query simulator routes
+app.use('/api/simulator', simulatorRoutes);
  
 // ── Health check ─────────────────────────────────────────────────
 // Visit http://localhost:3001/api/health to confirm server is running

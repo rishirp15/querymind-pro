@@ -12,7 +12,7 @@ const ENGINES = [
 ];
  
 export default function ConnectTab() {
-  const { connected, setConnected, setDbConfig, setSchema, dialect } = useApp();
+  const { connected, setConnected, setDbConfig, setSchema, setDialect } = useApp();
  
   // Form state
   const [engine,   setEngine]   = useState('postgresql');
@@ -24,10 +24,14 @@ export default function ConnectTab() {
   const [filepath, setFilepath] = useState('');
   const [loading,  setLoading]  = useState(false);
  
-  // When user picks an engine, update the default port
+  // Dialect labels matching the selector options in App.jsx
+  const ENGINE_TO_DIALECT = { postgresql: 'PostgreSQL', mysql: 'MySQL', sqlite: 'SQLite' };
+
+  // When user picks an engine, update the default port AND sync the AI dialect
   function handleEngineChange(eng) {
     setEngine(eng.id);
     setPort(eng.port);
+    if (ENGINE_TO_DIALECT[eng.id]) setDialect(ENGINE_TO_DIALECT[eng.id]);
   }
  
   // Handle the Connect button click
@@ -42,6 +46,8 @@ export default function ConnectTab() {
       setSchema(schemaResult.schema || {});
       setConnected(true);
       setDbConfig(config);
+      // Sync dialect to match the actual connected engine
+      if (ENGINE_TO_DIALECT[engine]) setDialect(ENGINE_TO_DIALECT[engine]);
       toast.success('Connected successfully! Schema loaded.');
     } catch (err) {
       // err.response.data.error comes from our backend error handler

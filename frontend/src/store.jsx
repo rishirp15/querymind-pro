@@ -60,12 +60,14 @@ export function AppProvider({ children }) {
     setSqlTabs(prev => {
       const remaining = prev.filter(t => t.id !== id);
       if (remaining.length === 0) return prev; // keep at least one
+      // Fix stale closure: update activeTabId inside the setSqlTabs callback
+      // using the fresh `prev` array, not the potentially stale `sqlTabs`
+      setActiveTabId(cur => {
+        if (cur !== id) return cur;
+        return remaining[remaining.length - 1]?.id ?? prev[0].id;
+      });
       return remaining;
     });
-    setActiveTabId(prev => prev === id
-      ? sqlTabs.find(t => t.id !== id)?.id || sqlTabs[0].id
-      : prev
-    );
   }
 
   function updateTab(id, changes) {
