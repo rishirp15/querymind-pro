@@ -245,4 +245,8 @@ function buildSchema(rows, fields) {
   return schema;
 }
 
-module.exports = { connect, query, getSchema };
+module.exports = { connect, query, getSchema, getEngine };
+// ── Get current engine ────────────────────────────────────────────
+function getEngine() {
+  return activeEngine;
+}

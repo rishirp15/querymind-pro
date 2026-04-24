@@ -71,3 +71,17 @@ export const aiChat = (messages, dialect, schema) =>
 // AI anomaly detection
 export const detectAnomalies = (schema, sampleData, dialect) =>
   api.post('/ai/anomaly', { schema, sampleData, dialect }).then(r => r.data);
+
+// ── Query Simulator ─────────────────────────────────────────────
+// Full real execution analysis (plan + index + join comparison + algorithm comparison)
+// BUG FIX: use 120s timeout — full analysis runs 10+ DB round-trips
+export const simulateQuery = (sql) =>
+  api.post('/simulator/analyze', { sql }, { timeout: 120000 }).then(r => r.data);
+
+// Quick explain only
+export const explainQueryPlan = (sql) =>
+  api.post('/simulator/explain', { sql }).then(r => r.data);
+
+// Standalone join algorithm comparison (Nested Loop / Hash Join / Merge Sort)
+export const compareJoinAlgorithms = (sql) =>
+  api.post('/simulator/join-algorithms', { sql }, { timeout: 120000 }).then(r => r.data);

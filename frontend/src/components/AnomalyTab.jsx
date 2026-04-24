@@ -9,7 +9,18 @@ export default function AnomalyTab() {
   const [loading, setLoading] = useState(false);
   const [report,  setReport]  = useState(null);
 
+  // Quote table name correctly based on dialect
+  function quoteTable(name) {
+    if (dialect === 'PostgreSQL') return `"${name}"`;
+    if (dialect === 'SQLite')     return `"${name}"`;
+    return `\`${name}\``; // MySQL default
+  }
+
   async function runScan() {
+    if (Object.keys(schema).length === 0) {
+      toast.error('No schema loaded — connect to a database first');
+      return;
+    }
     setLoading(true);
     try {
       // Collect sample data from each table
@@ -17,7 +28,7 @@ export default function AnomalyTab() {
       for (const tableName of Object.keys(schema).slice(0, 5)) {
         try {
           const result = await executeSQL(
-            `SELECT * FROM \`${tableName}\` LIMIT 20`
+            `SELECT * FROM ${quoteTable(tableName)} LIMIT 20`
           );
           sampleData[tableName] = {
             rows:    result.rows,

@@ -26,16 +26,17 @@ export default function SchemaTab() {
     ? tables.filter(([name]) => name.toLowerCase().includes(search.toLowerCase()))
     : tables;
 
-  // Load foreign keys when switching to ER mode
+  // Load foreign keys when switching to ER mode, or when schema changes (reconnect)
   useEffect(() => {
-    if (mode === 'er' && fks.length === 0) {
+    if (mode === 'er') {
       setFkLoading(true);
+      setFks([]); // clear stale fks on every schema change
       getForeignKeys()
         .then(d => setFks(d.rows || []))
         .catch(() => setFks([]))
         .finally(() => setFkLoading(false));
     }
-  }, [mode]);
+  }, [mode, schema]); // re-fetch whenever schema changes (e.g. reconnect to different DB)
 
   const selectedInfo = selected ? schema[selected] : null;
 

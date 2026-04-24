@@ -52,7 +52,7 @@ function QueryTab({ tab }) {
 
   const sql_val   = tab.sql;
   const results   = tab.results;
-  const isDangerous = /^\s*(DELETE|DROP|TRUNCATE)/i.test(sql_val.trim());
+  const isDangerous = /^\s*(DELETE|DROP|TRUNCATE|UPDATE)/i.test(sql_val.trim());
   const numericCols = results
     ? getNumericColumns(results.columns || [], results.rows || []) : [];
 
